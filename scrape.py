@@ -11,12 +11,13 @@ with open('assets/juniper_butterfly.jpeg', 'rb') as f:
 
         if v == 255 and i < length -1: 
 
-            raw_data.append(byte_obj[i+1])
+            raw_data.append((i, byte_obj[i + 1]))
+            
 
 
 
 for each in raw_data:
-    if each != 0:
+    if each[1] != 0:
         parsed.append(each)
 
 
