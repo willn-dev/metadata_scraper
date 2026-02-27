@@ -2,7 +2,7 @@ exif_tag = {
 
     0x010d: 'Document Name:',
     0x010e: 'Image Description',
-    0x0131: 'Software :',
+    0x0131: 'Software:',
     0x0132: 'Modify Date:',
     0x013b: 'Artist:',
     0x013c: 'Host Computer:',
@@ -24,5 +24,24 @@ exif_tag = {
     0x82a6: 'MD Scale Pixel:',
     0x8649: 'Photoshop Settings',
     0x8827: 'ISO'
+
+}
+
+data_type_len = {
+# this is to reference the data type of the value, and the corresponding number of
+#bytes which each value takes up. 
+
+    1: 1,
+    2: 1,
+    3: 2,
+    4: 4,
+    5: 8,
+    6: 1,
+    7: 1,
+    8: 2,
+    9: 4,
+    10: 8,
+    11: 4,
+    12: 8,
 
 }
