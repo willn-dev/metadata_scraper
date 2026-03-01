@@ -1,5 +1,6 @@
 from exif_inf import exif_tag, data_type_len
-
+import sys
+import pathlib
 
 # ----> 225 is flag for EXIF START <----###
 def main():
@@ -7,8 +8,9 @@ def main():
     parsed = [] # list of indices containing exif values.
     byte_order = ''# is set to big or little endian
 
+    path_image = file_select()
 
-    with open('assets/fujifilm-finepix40i.jpg', 'rb') as f:
+    with open(path_image, 'rb') as f:
         byte_obj = f.read()
 
         length = len(byte_obj)
@@ -91,7 +93,16 @@ def byte_stepper(start, end, byte_obj, byte_order, tiff_start):
 
 
 
-    
+def file_select():
+    file_loc = sys.argv[1]
+    extention = pathlib.Path(file_loc).suffix
+
+    if extention != '.jpeg' and extention != '.jpg':
+        print("This program is designed for analysing jpeg/jpg images only.")
+        exit()
+
+    return file_loc
+
 
 if __name__ == ("__main__"):
     main()
