@@ -31,11 +31,11 @@ data_type_len = {
 # this is to reference the data type of the value, and the corresponding number of
 #bytes which each value takes up. 
 
-    1: 1,
-    2: 1,
-    3: 2,
-    4: 4,
-    5: 8,
+    1: 1, # BYTE
+    2: 1, # ASCII
+    3: 2, #UINT16
+    4: 4, #UINT32
+    5: 8, # RATIONAL - Two longs for numerator/ denominator
     6: 1,
     7: 1,
     8: 2,
@@ -43,5 +43,14 @@ data_type_len = {
     10: 8,
     11: 4,
     12: 8,
+
+}
+
+data_type = {
+    1: 'byte',
+    2: 'ascii',
+    3: int,
+    4: int,
+    5,
 
 }

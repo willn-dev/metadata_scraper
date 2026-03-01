@@ -30,20 +30,24 @@ def main():
     for each in parsed:
         if each[1] == 225:
             exif_start = each[0]
+            break
+    else:
+        print("Image contains no EXIF data")
+        exit()
 
             #BIG OR LITTLE ENDIAN DETERMINATION
-            b_order = byte_obj[exif_start + 10: exif_start +12] # position of MM/II 2byte order marker.
+    b_order = byte_obj[exif_start + 10: exif_start +12] # position of MM/II 2byte order marker.
 
-            if b_order == b'MM':
-                byte_order = 'big'
-            elif b_order == b'II':
-                byte_order = 'little'
+    if b_order == b'MM':
+        byte_order = 'big'
+    elif b_order == b'II':
+        byte_order = 'little'
 
-            head_len = byte_obj[exif_start + 2: exif_start + 4] # Exif header 6 byte total. skipping first values and just reading len
+    head_len = byte_obj[exif_start + 2: exif_start + 4] # Exif header 6 byte total. skipping first values and just reading len
 
-            exif_len = int.from_bytes(head_len, byteorder=byte_order)
-            exif_end = exif_start + exif_len
-            tiff_start = exif_start + 10
+    exif_len = int.from_bytes(head_len, byteorder=byte_order)
+    exif_end = exif_start + exif_len
+    tiff_start = exif_start + 10
 
 
     byte_stepper(exif_start, exif_end, byte_obj, byte_order, tiff_start)
@@ -60,7 +64,8 @@ def byte_stepper(start, end, byte_obj, byte_order, tiff_start):
     #start parse IFD individually
     for i in range(0, len(all_ifd_entries), 12):
         single_ifd = all_ifd_entries[i:i + 12]
-        
+
+
         tag_id = int.from_bytes(single_ifd[0:2], byteorder=byte_order)
         datatype = single_ifd[2:4] 
         value_count = single_ifd [4:8]
@@ -76,7 +81,7 @@ def byte_stepper(start, end, byte_obj, byte_order, tiff_start):
 
             true_byte_len = value_count * length_of_bytes
 
-            if true_byte_len != val_or_ptr:
+            if true_byte_len > 4:
                 ptr_value_start = (tiff_start + val_or_ptr)
                 ptr_value_end = (tiff_start + val_or_ptr + value_count)
             
@@ -84,9 +89,11 @@ def byte_stepper(start, end, byte_obj, byte_order, tiff_start):
               
                 print(exif_tag[tag_id], end=' ')
                 print(true_data.decode('ascii'))
+                print(datatype)
+            elif true_byte_len <= 4:
+                true_data = val_or_ptr
 
-            elif true_byte_len == val_or_ptr:
-                pass # TODO START HERE <---------
+                print(exif_tag[tag_id], end=' ')
 
         else:
             print("not found")
@@ -104,7 +111,12 @@ def file_select():
     return file_loc
 
 
+def which_type(type_key):
+    type_key
+    #TODO: corresponding table to decode items
+    #ex returns ascii to place in decode() for the correct type
+
 if __name__ == ("__main__"):
     main()
 
-#----> TODO : handle case when image has no 225 exif flag.. <--------
+
