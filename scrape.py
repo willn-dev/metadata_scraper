@@ -90,12 +90,13 @@ def byte_stepper(start, end, byte_obj, byte_order, tiff_start):
                 print(exif_tag[tag_id], end=' ')
                 
                 type_decode = which_type(datatype)
-
                 print(true_data.decode(type_decode))
+
             elif true_byte_len <= 4:
                 true_data = val_or_ptr
+                type_decode = which_type(datatype)
 
-                print(exif_tag[tag_id], end=' ')
+                print(true_data.decode(type_decode))
 
         else:
             print("not found")
@@ -122,3 +123,5 @@ if __name__ == ("__main__"):
     main()
 
 
+#### NEED TO FIX WHEN DATATYPE IS INT, NO DECODE IS NEEDED, ELSE DECODE WITH APPROPRIATE TYPE
+#CREATE DESIGNATED DECODING FUNCTION TO ABSTRACT THIS

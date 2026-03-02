@@ -84,10 +84,15 @@ gps_inf = {
     0x0012:	'GPSMapDatum',
     0x0013:	'GPSDestLatitudeRef',
     0x0014:	'GPSDestLatitude',
-
-
-
-
-
-
+    0x0015:	'GPSDestLongitudeRef',
+    0x0016:	'GPSDestLongitude',
+    0x0017:	'GPSDestBearingRef',
+    0x0018:	'GPSDestBearing',
+    0x0019:	'GPSDestDistanceRef',
+    0x001a:	'GPSDestDistance',
+    0x001b:	'GPSProcessingMethod',
+    0x001c:	'GPSAreaInformation',
+    0x001d:	'GPSDateStamp',
+    0x001e:	'GPSDifferential',
+    0x001f:	'GPSHPositioningError',
 }
