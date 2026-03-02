@@ -1,4 +1,4 @@
-from exif_inf import exif_tag, data_type_len
+from exif_inf import exif_tag, data_type_len, data_type
 import sys
 import pathlib
 
@@ -88,8 +88,10 @@ def byte_stepper(start, end, byte_obj, byte_order, tiff_start):
                 true_data = byte_obj[ptr_value_start:ptr_value_end]
               
                 print(exif_tag[tag_id], end=' ')
-                print(true_data.decode('ascii'))
-                print(datatype)
+                
+                type_decode = which_type(datatype)
+
+                print(true_data.decode(type_decode))
             elif true_byte_len <= 4:
                 true_data = val_or_ptr
 
@@ -111,10 +113,10 @@ def file_select():
     return file_loc
 
 
-def which_type(type_key):
-    type_key
-    #TODO: corresponding table to decode items
-    #ex returns ascii to place in decode() for the correct type
+def which_type(integer_for_type):
+    type_key = data_type[integer_for_type]
+    return type_key
+    
 
 if __name__ == ("__main__"):
     main()

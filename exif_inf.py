@@ -51,6 +51,43 @@ data_type = {
     2: 'ascii',
     3: int,
     4: int,
-    5,
+    5: int,
+    6: int,
+    7: int,
+    8: int,
+    9: int,
+    10: int,
+    11: int,
+    12: int,
+
+}
+
+gps_inf = {
+    0x0000:	'GPSVersionID: ',
+    0x0001:	'GPSLatitudeRef: ',
+    0x0002:	'GPSLatitude: ',
+    0x0003:	'GPSLongitudeRef: ',
+    0x0004:	'GPSLongitude: ',
+    0x0005:	'GPSAltitudeRef: ',
+    0x0006:	'GPSAltitude: ',
+    0x0007:	'GPSTimeStamp: ',
+    0x0008:	'GPSSatellites',
+    0x0009:	'GPSStatus',
+    0x000a:	'GPSMeasureMode',
+    0x000b:	'GPSDOP',
+    0x000c:	'GPSSpeedRef',
+    0x000d:	'GPSSpeed',
+    0x000e:	'GPSTrackRef',
+    0x000f:	'GPSTrack',
+    0x0010:	'GPSImgDirectionRef',
+    0x0011:	'GPSImgDirection',
+    0x0012:	'GPSMapDatum',
+    0x0013:	'GPSDestLatitudeRef',
+    0x0014:	'GPSDestLatitude',
+
+
+
+
+
 
 }
