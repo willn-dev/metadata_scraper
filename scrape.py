@@ -52,7 +52,7 @@ def main():
 
     byte_stepper(exif_start, exif_end, byte_obj, byte_order, tiff_start)
 
-
+#---------------------------------------------------------------------------------------------------------------------------------
 def byte_stepper(start, end, byte_obj, byte_order, tiff_start):
 
     ifd_entry_amt = int.from_bytes((byte_obj[start + 18 : start + 20]), byteorder= byte_order)
@@ -83,28 +83,41 @@ def byte_stepper(start, end, byte_obj, byte_order, tiff_start):
 
             if true_byte_len > 4:
                 ptr_value_start = (tiff_start + val_or_ptr)
-                ptr_value_end = (tiff_start + val_or_ptr + value_count)
+                ptr_value_end = (ptr_value_start + true_byte_len)
             
                 true_data = byte_obj[ptr_value_start:ptr_value_end]
-              
                 print(exif_tag[tag_id], end=' ')
-                
                 type_decode = which_type(datatype)
-                print(true_data.decode(type_decode))
+                final = decoding(true_data, datatype,)
+                
+
+                print(final)
 
             elif true_byte_len <= 4:
                 true_data = val_or_ptr
                 type_decode = which_type(datatype)
+                final = decoding(true_data, datatype)
 
-                print(true_data.decode(type_decode))
+                if tag_id == 0x8825: #pointer for gps info
+                    gps_parse(byte_obj, tiff_start, val_or_ptr, byte_order)
+
+
+                print(exif_tag[tag_id], end=' ')
+                print(final)
 
         else:
             print("not found")
 
-
+#------------------------------------------------------------------------------
 
 def file_select():
-    file_loc = sys.argv[1]
+    try:
+        file_loc = sys.argv[1]
+    except IndexError:
+        print("Must specify path to image. \n Usage: scrape.py (imagepath)")
+        exit()
+
+
     extention = pathlib.Path(file_loc).suffix
 
     if extention != '.jpeg' and extention != '.jpg':
@@ -113,15 +126,32 @@ def file_select():
 
     return file_loc
 
-
+#--------------------------------------------------------------------------------
 def which_type(integer_for_type):
     type_key = data_type[integer_for_type]
     return type_key
     
+#--------------------------------------------------------------------------------
+def decoding(true_data, datatype):
+
+    if datatype == 2 and isinstance(true_data, bytes):
+        return true_data.decode('ascii')
+    else:
+        return true_data
+        
+#--------------------------------------------------------------------------------
+def gps_parse(byte_obj, tiff_start, gps_ptr, byte_order):
+    print('testing')
+    start = tiff_start + gps_ptr
+    gps_entry_amt = byte_obj[start: start + 2]
+
+    print(int.from_bytes(gps_entry_amt, byteorder= byte_order))
+
+    #TODO: Make gps parsing loop to loop thru the gps entry amount in the 12 byte steps as
+    #previously done in byte_stepper func
 
 if __name__ == ("__main__"):
     main()
 
 
-#### NEED TO FIX WHEN DATATYPE IS INT, NO DECODE IS NEEDED, ELSE DECODE WITH APPROPRIATE TYPE
-#CREATE DESIGNATED DECODING FUNCTION TO ABSTRACT THIS
+#finishing where data is decoded and printed in func bytestepper
