@@ -144,8 +144,23 @@ def gps_parse(byte_obj, tiff_start, gps_ptr, byte_order):
     print('testing')
     start = tiff_start + gps_ptr
     gps_entry_amt = byte_obj[start: start + 2]
+    gps_end = gps_entry_amt * 12
+    all_gps_entries = byte_obj[start:gps_end]
 
-    print(int.from_bytes(gps_entry_amt, byteorder= byte_order))
+
+    for i in range(0, len(all_gps_entries), 12):
+        single_gps_ifd = all_gps_entries[i : i + 12]
+
+        gps_tag_id = int.from_bytes(single_gps_ifd[0:2], byteorder=byte_order)
+        gps_datatype = single_gps_ifd[2:4] 
+        gps_value_count = single_gps_ifd [4:8]
+        gps_val_or_ptr = single_gps_ifd[8:12]
+        gps_datatype_len = data_type_len[gps_datatype]
+
+        # TODO: convert int from bytes for these above fields
+
+        if gps_value_count * gps_datatype_len <= gps_val_or_ptr:
+
 
     #TODO: Make gps parsing loop to loop thru the gps entry amount in the 12 byte steps as
     #previously done in byte_stepper func
