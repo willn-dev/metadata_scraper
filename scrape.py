@@ -1,4 +1,4 @@
-from exif_inf import exif_tag, data_type_len, data_type
+from exif_inf import exif_tag, data_type_len, data_type, gps_inf
 import sys
 import pathlib
 
@@ -141,32 +141,36 @@ def decoding(true_data, datatype):
         
 #--------------------------------------------------------------------------------
 def gps_parse(byte_obj, tiff_start, gps_ptr, byte_order):
-    print('testing')
-    start = tiff_start + gps_ptr
-    gps_entry_amt = byte_obj[start: start + 2]
+    start = tiff_start + gps_ptr 
+    gps_entry_amt = int.from_bytes(byte_obj[start: start + 2], byteorder=byte_order)
     gps_end = gps_entry_amt * 12
-    all_gps_entries = byte_obj[start:gps_end]
+    all_gps_entries = byte_obj[start +2 :start + gps_end]
 
 
     for i in range(0, len(all_gps_entries), 12):
         single_gps_ifd = all_gps_entries[i : i + 12]
 
         gps_tag_id = int.from_bytes(single_gps_ifd[0:2], byteorder=byte_order)
-        gps_datatype = single_gps_ifd[2:4] 
-        gps_value_count = single_gps_ifd [4:8]
-        gps_val_or_ptr = single_gps_ifd[8:12]
-        gps_datatype_len = data_type_len[gps_datatype]
+        gps_datatype_raw = int.from_bytes(single_gps_ifd[2:4], byteorder=byte_order)
+        gps_datatype_final = data_type[gps_datatype_raw]
+        gps_value_count = int.from_bytes(single_gps_ifd [4:8], byteorder=byte_order)
+        gps_val_or_ptr = int.from_bytes(single_gps_ifd[8:12], byteorder=byte_order)
+        gps_datatype_len = data_type_len[gps_datatype_raw]
 
         # TODO: convert int from bytes for these above fields
 
-        if gps_value_count * gps_datatype_len <= gps_val_or_ptr:
+        if gps_value_count * gps_datatype_len <= 4: # 4 is the size of this ifd section in bytes
+            gps_true_val = gps_val_or_ptr
+            print(gps_true_val)
+        else:
+            offset_to_ptr #needs to be sliced with byteobj + gpsvalorptr
+            final_val = decoding(gps_val_or_ptr, gps_datatype_final)
+            print(final_val)
 
+    #TODO: check value against gps tags to determine what it is
 
-    #TODO: Make gps parsing loop to loop thru the gps entry amount in the 12 byte steps as
-    #previously done in byte_stepper func
 
 if __name__ == ("__main__"):
     main()
 
 
-#finishing where data is decoded and printed in func bytestepper
