@@ -132,12 +132,12 @@ def which_type(integer_for_type):
     return type_key
     
 #--------------------------------------------------------------------------------
-def decoding(true_data, datatype):
+def decoding(data, datatype):
 
-    if datatype == 2 and isinstance(true_data, bytes):
-        return true_data.decode('ascii')
+    if datatype == 2 and isinstance(data, bytes):
+        return data.decode('ascii')
     else:
-        return true_data
+        return data
         
 #--------------------------------------------------------------------------------
 def gps_parse(byte_obj, tiff_start, gps_ptr, byte_order):
@@ -155,19 +155,26 @@ def gps_parse(byte_obj, tiff_start, gps_ptr, byte_order):
         gps_datatype_final = data_type[gps_datatype_raw]
         gps_value_count = int.from_bytes(single_gps_ifd [4:8], byteorder=byte_order)
         gps_val_or_ptr = int.from_bytes(single_gps_ifd[8:12], byteorder=byte_order)
+        gps_val_no_ptr = single_gps_ifd[8:12]
         gps_datatype_len = data_type_len[gps_datatype_raw]
 
-        # TODO: convert int from bytes for these above fields
+        if gps_tag_id in gps_inf:
 
-        if gps_value_count * gps_datatype_len <= 4: # 4 is the size of this ifd section in bytes
-            gps_true_val = gps_val_or_ptr
-            print(gps_true_val)
-        else:
-            offset_to_ptr #needs to be sliced with byteobj + gpsvalorptr
-            final_val = decoding(gps_val_or_ptr, gps_datatype_final)
-            print(final_val)
+            #IF NOT PTR
+            if gps_value_count * gps_datatype_len <= 4: # 4 is the size of this ifd section in bytes
 
-    #TODO: check value against gps tags to determine what it is
+                final = decoding(gps_val_no_ptr, gps_datatype_raw)
+                print(gps_inf[gps_tag_id], end=' ')
+                print(final)
+
+            else: #IF PTR
+                pointer_read_start = tiff_start + gps_val_or_ptr
+                pointer_read_end = pointer_read_start + (gps_value_count * gps_datatype_len)
+                offset_to_ptr = byte_obj[pointer_read_start : pointer_read_end]
+
+                final_val = decoding(offset_to_ptr, gps_datatype_raw)
+                print(f"{gps_inf[gps_tag_id]}", end=' ')
+                print(final_val)
 
 
 if __name__ == ("__main__"):
