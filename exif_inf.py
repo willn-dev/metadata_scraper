@@ -51,7 +51,7 @@ data_type = {
     2: 'ascii',
     3: int,
     4: int,
-    5: int,
+    5: 'rational',
     6: int,
     7: int,
     8: int,

@@ -1,6 +1,7 @@
 from exif_inf import exif_tag, data_type_len, data_type, gps_inf
 import sys
 import pathlib
+from fractions import Fraction
 
 # ----> 225 is flag for EXIF START <----###
 def main():
@@ -163,7 +164,9 @@ def gps_parse(byte_obj, tiff_start, gps_ptr, byte_order):
             #IF NOT PTR
             if gps_value_count * gps_datatype_len <= 4: # 4 is the size of this ifd section in bytes
 
+
                 final = decoding(gps_val_no_ptr, gps_datatype_raw)
+
                 print(gps_inf[gps_tag_id], end=' ')
                 print(final)
 
@@ -171,11 +174,65 @@ def gps_parse(byte_obj, tiff_start, gps_ptr, byte_order):
                 pointer_read_start = tiff_start + gps_val_or_ptr
                 pointer_read_end = pointer_read_start + (gps_value_count * gps_datatype_len)
                 offset_to_ptr = byte_obj[pointer_read_start : pointer_read_end]
-
                 final_val = decoding(offset_to_ptr, gps_datatype_raw)
-                print(f"{gps_inf[gps_tag_id]}", end=' ')
-                print(final_val)
 
+                print(f"{gps_inf[gps_tag_id]}", end=' ')
+
+                if gps_datatype_final == 'rational':
+                    coords = rational_coords(final_val, byte_order)
+                    print(coords)
+
+                else:
+                    print(final_val)
+
+#-------------------------------------------------------------------------------------
+def rational_coords(r_slice, byte_order):
+    #each rational is 8 bytes. That is 4 as numerator and 4 as denominator
+    returned_fractions = []
+    for i in range(0, len(r_slice), 8):
+        start_num = i
+        end_num = i + 4
+
+        start_denom = i + 4
+        end_denom = i + 8
+
+        numer = int.from_bytes(r_slice[start_num:end_num])
+        denom = int.from_bytes(r_slice[start_denom:end_denom])
+
+        fraction = Fraction(numerator= numer, denominator= denom)
+        returned_fractions.append(fraction)
+
+    if len(returned_fractions) == 3: #if this is a gps format
+
+        degrees = returned_fractions[0]
+        minutes = returned_fractions[1]
+        seconds = returned_fractions[2]
+
+        decimal_coord = degrees + (minutes/60) + (seconds / 3600)
+
+        return round(float(decimal_coord), 6)
+            
+
+
+    return returned_fractions
+
+
+
+    #take bytes from rational
+    #split 4 and 4
+    # convert each to int and use fractions.Fraction class
+    # eg Fraction(numerator, denominator,) return fraction
+
+    #does fraction get divided to form the longitudinal and latitudinal degree? 
+    #if so how do I divide this correctly
+
+    #focus on this for longer blocks of time and stay focused. this is taking you much
+    #much too long bro
+
+
+
+
+    
 
 if __name__ == ("__main__"):
     main()
