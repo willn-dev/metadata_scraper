@@ -88,7 +88,6 @@ def byte_stepper(start, end, byte_obj, byte_order, tiff_start):
             
                 true_data = byte_obj[ptr_value_start:ptr_value_end]
                 print(exif_tag[tag_id], end=' ')
-                type_decode = which_type(datatype)
                 final = decoding(true_data, datatype,)
                 
 
@@ -105,6 +104,7 @@ def byte_stepper(start, end, byte_obj, byte_order, tiff_start):
 
                 print(exif_tag[tag_id], end=' ')
                 print(final)
+            
 
         else:
             print("not found")
@@ -164,8 +164,12 @@ def gps_parse(byte_obj, tiff_start, gps_ptr, byte_order):
             #IF NOT PTR
             if gps_value_count * gps_datatype_len <= 4: # 4 is the size of this ifd section in bytes
 
+                
+                if gps_datatype_raw == 2:
+                    final = decoding(gps_val_no_ptr, gps_datatype_raw)
 
-                final = decoding(gps_val_no_ptr, gps_datatype_raw)
+                else:
+                    final = decoding(gps_val_or_ptr, gps_datatype_raw,)
 
                 print(gps_inf[gps_tag_id], end=' ')
                 print(final)
@@ -212,26 +216,9 @@ def rational_coords(r_slice, byte_order):
 
         return round(float(decimal_coord), 6)
             
+    else:
 
-
-    return returned_fractions
-
-
-
-    #take bytes from rational
-    #split 4 and 4
-    # convert each to int and use fractions.Fraction class
-    # eg Fraction(numerator, denominator,) return fraction
-
-    #does fraction get divided to form the longitudinal and latitudinal degree? 
-    #if so how do I divide this correctly
-
-    #focus on this for longer blocks of time and stay focused. this is taking you much
-    #much too long bro
-
-
-
-
+        return returned_fractions
     
 
 if __name__ == ("__main__"):
